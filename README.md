@@ -22,8 +22,6 @@ uv sync
 │   ├── model-merging/  # Main package
 │   │   ├── __init__.py
 │   │   ├── main.py
-│   ├── tests/               # Test suite
-│   │   ├── test_main.py
 ├── pyproject.toml           # Package configuration
 ├── README.md                # This file
 └── LICENSE                  # License information
@@ -31,15 +29,15 @@ uv sync
 
 ---
 
-## 🧪 Running Tests
+## Multi-Task Merging
 
-To run the test suite:
+Use `conf/multitask.yaml` to define the models you want to merge and the tasks you will evaluate the merged model on. Then run
 
 ```sh
-uv run pytest
+uv run scripts/evaluate_multi_task_merging.py
 ```
 
----
+If you want to define a new merging method, create a new class in `src/model_merging/merger/` and a corresponding config in `conf/merger`. Then change the `merger` field in the `multitask.yaml` config.
 
 ## 👤 Maintainers
 
