@@ -2,7 +2,6 @@ _target_: model_merging.merger.dual_merging.DualMerger
 
 alpha: null  # If provided, overrides optimal_alphas lookup
 
-
 optimal_alphas:
   ViT-B-16:
     '8': 1.4
@@ -17,7 +16,7 @@ optimal_alphas:
     '14': 2.6
     '20': 3.0
 
-svd_path: "${oc.env:PROJECT_ROOT}svd_dict_${nn.encoder.model_name}.pt"
+svd_path: null  # Set to a path to enable SVD caching
 #svd_compress_factor: 16.5
 svd_compress_factor: null
 device: ${device}

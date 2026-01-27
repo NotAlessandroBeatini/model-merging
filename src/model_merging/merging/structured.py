@@ -315,26 +315,31 @@ def get_svd_dict(
     compression_ratio = 1 / compression_factor
     pylogger.info(f"Using compression ratio: {compression_ratio:.4f}")
 
-    svd_path = str(Path(svd_path))
-    if svd_path.endswith('.pt'):
-        svd_path = svd_path[:-3]
-    svd_path = f"{svd_path}_compress_{compression_factor}.pt"
+    # Handle caching only if svd_path is provided
+    if svd_path is not None:
+        svd_path = str(Path(svd_path))
+        if svd_path.endswith('.pt'):
+            svd_path = svd_path[:-3]
+        svd_path = f"{svd_path}_compress_{compression_factor}.pt"
 
-    if svd_path is not None and Path(svd_path).exists():
-        pylogger.info(f"Loading precomputed SVD dictionary from: {svd_path}")
-        svd_dict = torch.load(svd_path, map_location="cuda", weights_only=False)
+        if Path(svd_path).exists():
+            pylogger.info(f"Loading precomputed SVD dictionary from: {svd_path}")
+            svd_dict = torch.load(svd_path, map_location="cuda", weights_only=False)
 
-        if set(svd_dict.keys()) == set(datasets):
-            return svd_dict
+            if set(svd_dict.keys()) == set(datasets):
+                return svd_dict
 
-        pylogger.warning("Mismatch in datasets. Recomputing SVD dictionary...")
-
+            pylogger.warning("Mismatch in datasets. Recomputing SVD dictionary...")
+        else:
+            pylogger.info("No precomputed SVD dictionary found. Computing from scratch...")
     else:
-        pylogger.info("No precomputed SVD dictionary found. Computing from scratch...")
+        pylogger.info("SVD caching disabled. Computing SVD from scratch...")
 
     svd_dict = decompose_task_vectors(task_dicts, compression_ratio)
-    torch.save(svd_dict, svd_path)
-    pylogger.info(f"SVD dictionary saved at: {svd_path}")
+    
+    if svd_path is not None:
+        torch.save(svd_dict, svd_path)
+        pylogger.info(f"SVD dictionary saved at: {svd_path}")
 
     return svd_dict
 
