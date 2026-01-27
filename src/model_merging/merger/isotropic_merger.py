@@ -32,6 +32,7 @@ class IsotropicMerger(TaskVectorBasedMerger):
     def merge(self, base_model, finetuned_models):
 
         task_dicts = {}
+        num_tasks = str(len(finetuned_models))
 
         datasets = list(finetuned_models.keys())
 
@@ -54,8 +55,6 @@ class IsotropicMerger(TaskVectorBasedMerger):
         )
 
         model_name = self.model_name
-
-        num_tasks = str(len(finetuned_models))
 
         if self.alpha is not None:
             coefficient = self.alpha
