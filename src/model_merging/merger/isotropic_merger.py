@@ -19,13 +19,14 @@ pylogger = logging.getLogger(__name__)
 
 class IsotropicMerger(TaskVectorBasedMerger):
 
-    def __init__(self, optimal_alphas, svd_path, svd_compress_factor, alpha=None, *args, **kwargs):
+    def __init__(self, optimal_alphas, svd_path, svd_compress_factor, model_name, alpha=None, *args, **kwargs):
         super().__init__()
 
         self.alpha = alpha
         self.optimal_alphas = optimal_alphas
         self.svd_path = svd_path
         self.svd_compress_factor = svd_compress_factor
+        self.model_name = model_name
 
     @torch.no_grad()
     def merge(self, base_model, finetuned_models):
@@ -52,9 +53,9 @@ class IsotropicMerger(TaskVectorBasedMerger):
             svd_dict=svd_dict,
         )
 
-        model_name = self.cfg.nn.module.encoder.model_name
+        model_name = self.model_name
 
-        num_tasks = len(finetuned_models)
+        num_tasks = str(len(finetuned_models))
 
         if self.alpha is not None:
             coefficient = self.alpha
