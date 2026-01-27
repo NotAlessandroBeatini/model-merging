@@ -71,9 +71,9 @@ class _HFImageTorchDataset(Dataset):
 class HFImageClassification:
     """
     Strict adapter around an ALREADY-LOADED HF DatasetDict.
-    Exposes: train_dataset/test_dataset, train_loader/test_loader, classnames.
+    Exposes: train_dataset/val_dataset/test_dataset, train_loader/val_loader/test_loader, classnames.
     - Requires actual 'train' and 'test' splits (or explicit split_map pointing to existing keys).
-    - No auto-splitting, no validation remap, no heuristics.
+    - Automatically reserves 10% of the test set for validation (random split, no contamination).
     """
 
     def __init__(
@@ -91,6 +91,8 @@ class HFImageClassification:
         ] = None,
         classnames_override: Optional[Sequence[str]] = None,
         pin_memory: bool = True,
+        val_fraction: float = 0.1,
+        seed: int = 42,
     ):
 
         if split_map is None:
@@ -107,17 +109,43 @@ class HFImageClassification:
                 train_key in hf_ds and test_key in hf_ds
             ), f"split_map points to missing splits: got {list(hf_ds.keys())}"
 
+        # Split the original test set into val (10%) and test (90%) with random shuffling
+        original_test = hf_ds[test_key]
+        n_total = len(original_test)
+        n_val = int(n_total * val_fraction)
+        n_test = n_total - n_val
+
+        # Create reproducible random permutation
+        rng = np.random.default_rng(seed)
+        indices = rng.permutation(n_total)
+        val_indices = indices[:n_val].tolist()
+        test_indices = indices[n_val:].tolist()
+
+        # Select subsets using the shuffled indices
+        val_split = original_test.select(val_indices)
+        test_split = original_test.select(test_indices)
+
         self.train_dataset = _HFImageTorchDataset(
             hf_ds[train_key], transform=preprocess, label_map=label_map
         )
+        self.val_dataset = _HFImageTorchDataset(
+            val_split, transform=preprocess, label_map=label_map
+        )
         self.test_dataset = _HFImageTorchDataset(
-            hf_ds[test_key], transform=preprocess, label_map=label_map
+            test_split, transform=preprocess, label_map=label_map
         )
 
         self.train_loader = DataLoader(
             self.train_dataset,
             batch_size=batch_size,
             shuffle=True,
+            num_workers=num_workers,
+            pin_memory=pin_memory,
+        )
+        self.val_loader = DataLoader(
+            self.val_dataset,
+            batch_size=batch_size,
+            shuffle=False,
             num_workers=num_workers,
             pin_memory=pin_memory,
         )
@@ -136,6 +164,7 @@ class HFImageClassification:
 
         # mirror torchvision attr some libs expect
         self.train_dataset.classes = self.classnames
+        self.val_dataset.classes = self.classnames
         self.test_dataset.classes = self.classnames
         self.ft_epochs = ft_epochs
 
