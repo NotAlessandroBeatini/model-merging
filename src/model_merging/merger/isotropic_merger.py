@@ -19,7 +19,7 @@ pylogger = logging.getLogger(__name__)
 
 class IsotropicMerger(TaskVectorBasedMerger):
 
-    def __init__(self, optimal_alphas, svd_path, svd_compress_factor, alpha=None):
+    def __init__(self, optimal_alphas, svd_path, svd_compress_factor, alpha=None, *args, **kwargs):
         super().__init__()
 
         self.alpha = alpha

@@ -469,6 +469,7 @@ class DualCommonTaskSpecificMerger(TaskVectorBasedMerger):
         device,
         svd_path, 
         svd_compress_factor,
+        *args, **kwargs
     ):
         super().__init__()
 
