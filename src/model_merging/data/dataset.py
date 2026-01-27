@@ -207,6 +207,45 @@ def compute_label_map_from_names(
     return label_map
 
 
+ALLOWED_SPLITS = {"train", "test", "val", "validation"}
+
+
+def load_hf_dataset_filtered(path: str, name: str = None, **kwargs) -> DatasetDict:
+    """
+    Load a HuggingFace dataset, only downloading allowed splits (train, test, val, validation).
+    """
+    from datasets import get_dataset_split_names
+
+    # Get available splits for this dataset
+    try:
+        available_splits = get_dataset_split_names(path, config_name=name)
+    except Exception:
+        # Fallback: load all and filter (some datasets don't support split listing)
+        ds = load_hf_dataset(path, name=name, **kwargs) if name else load_hf_dataset(path, **kwargs)
+        if isinstance(ds, DatasetDict):
+            return DatasetDict({k: v for k, v in ds.items() if k in ALLOWED_SPLITS})
+        return ds
+
+    # Only download splits that are in ALLOWED_SPLITS
+    splits_to_load = [s for s in available_splits if s in ALLOWED_SPLITS]
+
+    if not splits_to_load:
+        raise ValueError(
+            f"No allowed splits found for dataset '{path}'. "
+            f"Available: {available_splits}, Allowed: {ALLOWED_SPLITS}"
+        )
+
+    # Load each allowed split individually
+    loaded_splits = {}
+    for split in splits_to_load:
+        if name:
+            loaded_splits[split] = load_hf_dataset(path, name=name, split=split, **kwargs)
+        else:
+            loaded_splits[split] = load_hf_dataset(path, split=split, **kwargs)
+
+    return DatasetDict(loaded_splits)
+
+
 def load_dataset(
     name,
     hf_dataset,
