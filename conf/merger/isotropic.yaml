@@ -1,5 +1,7 @@
 _target_: model_merging.merger.isotropic.IsotropicMerger
 
+alpha: null  # If provided, overrides optimal_alphas lookup
+
 optimal_alphas:
   ViT-B-32:
     8: 1.00

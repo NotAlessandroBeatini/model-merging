@@ -19,9 +19,10 @@ pylogger = logging.getLogger(__name__)
 
 class IsotropicMerger(TaskVectorBasedMerger):
 
-    def __init__(self, optimal_alphas, svd_path, svd_compress_factor):
+    def __init__(self, optimal_alphas, svd_path, svd_compress_factor, alpha=None):
         super().__init__()
 
+        self.alpha = alpha
         self.optimal_alphas = optimal_alphas
         self.svd_path = svd_path
         self.svd_compress_factor = svd_compress_factor
@@ -55,11 +56,17 @@ class IsotropicMerger(TaskVectorBasedMerger):
 
         num_tasks = len(finetuned_models)
 
-        if (
+        if self.alpha is not None:
+            coefficient = self.alpha
+        elif (
             model_name in self.optimal_alphas
             and num_tasks in self.optimal_alphas[model_name]
         ):
             coefficient = self.optimal_alphas[model_name][num_tasks]
+        else:
+            raise ValueError(
+                f"No alpha provided and no optimal alpha found for model {model_name} with {num_tasks} tasks"
+            )
 
         merged_encoder: ImageEncoder = copy.deepcopy(base_model)
 
