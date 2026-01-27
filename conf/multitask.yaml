@@ -1,16 +1,16 @@
 core:
-  project_name: model_merging
+  project_name: dual-merging
   storage_dir: ${oc.env:PROJECT_ROOT}/storage
   entity: gladia
   version: 0.0.1
   tags: 
-  - dev
+  - don
   
 defaults:
   - hydra: default
   - nn: default
   - train: default
-  - merger: tsv # iso-c, consensus
+  - merger: dual # iso-c, consensus
   - benchmark: N20 # N14, N8
   - override hydra/launcher: basic # basic
   - override hydra/job_logging: none

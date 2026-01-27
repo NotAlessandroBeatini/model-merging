@@ -3,5 +3,5 @@ name: RenderedSST2
 ft_epochs: 39
 preprocess_fn: ???
 hf_dataset: 
-  _target_: datasets.load_dataset
+  _target_: model_merging.data.dataset.load_hf_dataset_filtered
   path: nateraw/rendered-sst2

@@ -3,7 +3,7 @@ name: PCAM
 ft_epochs: 1
 preprocess_fn: ??
 hf_dataset: 
-  _target_: datasets.load_dataset
+  _target_: model_merging.data.dataset.load_hf_dataset_filtered
   path: 1aurent/PatchCamelyon
 classnames_override:
   - "lymph node"

@@ -3,6 +3,5 @@ name: MNIST
 ft_epochs: 5
 preprocess_fn: ??
 hf_dataset: 
-  _target_: datasets.load_dataset
-  path: mnist
-
+  _target_: model_merging.data.dataset.load_hf_dataset_filtered
+  path: ylecun/mnist
