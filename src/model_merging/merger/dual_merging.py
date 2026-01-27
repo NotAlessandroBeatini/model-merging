@@ -380,8 +380,9 @@ def build_clip_vit_network_module(layer_names, grads, masses):
 
 class DualMerger(TaskVectorBasedMerger):
 
-    def __init__(self, optimal_alphas, svd_path, svd_compress_factor,model_name, device=None):
+    def __init__(self, optimal_alphas, svd_path, svd_compress_factor,model_name, device=None, alpha=None):
         super().__init__()
+        self.alpha = alpha
         self.optimal_alphas = optimal_alphas
         self.svd_path = svd_path
         self.svd_compress_factor = svd_compress_factor
@@ -434,14 +435,18 @@ class DualMerger(TaskVectorBasedMerger):
         for key in module_vec:
             multi_task_vector[key] = module_vec[key]
         model_name = self.model_name
-        coefficient = 1.0 
 
-        if (
+        if self.alpha is not None:
+            coefficient = self.alpha
+        elif (
             model_name in self.optimal_alphas
             and f"{num_tasks}" in self.optimal_alphas[model_name]
         ):
             coefficient = self.optimal_alphas[model_name][f"{num_tasks}"]
-
+        else:
+            raise ValueError(
+                f"No alpha provided and no optimal alpha found for model {model_name} with {num_tasks} tasks"
+            )
 
         merged_encoder = copy.deepcopy(base_model)
         print("USING ALPHA:", coefficient)
