@@ -148,9 +148,7 @@ def run(cfg: DictConfig) -> str:
         model.set_metrics(len(dataset.classnames))
         model.set_task(dataset_cfg.name)
         model.set_finetuning_accuracy(
-            finetuned_accuracies[
-                dataset_cfg.name + "Val" if cfg.eval_on_train else dataset_cfg.name
-            ]
+            finetuned_accuracies[dataset_cfg.name]
         )
 
         callbacks: List[Callback] = build_callbacks(cfg.train.callbacks, template_core)
@@ -160,17 +158,12 @@ def run(cfg: DictConfig) -> str:
             plugins=[NNCheckpointIO(jailing_dir=logger.run_dir)],
             logger=logger,
             callbacks=callbacks,
-            limit_test_batches=(
-                cfg.number_of_train_batches if cfg.eval_on_train else None
-            ),
             **cfg.train.trainer,
         )
 
-        if cfg.eval_on_train:
-            pylogger.error("For now evaluation supported only on val-set")
-            pylogger.info(f"Evaluating on {dataset_cfg.name} the training set")
-            test_results = trainer.test(model=model, dataloaders=dataset.train_loader)
-
+        if cfg.eval_on_val:
+            pylogger.info(f"Evaluating on {dataset_cfg.name} validation split")
+            test_results = trainer.test(model=model, dataloaders=dataset.val_loader)
         else:
             pylogger.info(f"Evaluating on the {dataset_cfg.name} test set!")
             test_results = trainer.test(model=model, dataloaders=dataset.test_loader)

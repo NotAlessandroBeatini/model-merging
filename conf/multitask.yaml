@@ -19,8 +19,7 @@ defaults:
 
 seed_index: 0
 num_tasks: ???
-eval_on_train: false
-number_of_train_batches: 25 # number of batches of the val set, used for grid search
+eval_on_val: false
 device: 'cuda'
 
 conventions:
