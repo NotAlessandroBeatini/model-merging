@@ -230,3 +230,5 @@ wandb/**
 storage/**
 models/** 
 **/models/**
+
+uv.lock

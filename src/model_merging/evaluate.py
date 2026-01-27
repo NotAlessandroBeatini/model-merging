@@ -21,7 +21,7 @@ from nn_core.common import PROJECT_ROOT
 from nn_core.common.utils import seed_index_everything
 from nn_core.model_logging import NNLogger
 
-from model_merging.utils import linear_interpolate
+from model_merging.utils.utils import linear_interpolate
 
 pylogger = logging.getLogger(__name__)
 

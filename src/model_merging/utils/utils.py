@@ -436,20 +436,6 @@ def unzip_all_in_folder(folder_path):
             print(f"Extracted: {zip_path} → {extract_path}")
 
 
-def is_all_zeros(tensor: torch.Tensor | List[torch.Tensor]) -> bool:
-    """
-    Check if a tensor or a list of tensors are all zeros.
-
-    Args:
-        tensor (Tensor | List[Tensor]): A tensor or a list of tensors.
-
-    Returns:
-        bool: True if all elements are zeros, False otherwise.
-    """
-    if isinstance(tensor, torch.Tensor):
-        return torch.allclose(tensor, torch.zeros_like(tensor))
-    else:
-        return all(is_all_zeros(t) for t in tensor)
 
 
 import logging

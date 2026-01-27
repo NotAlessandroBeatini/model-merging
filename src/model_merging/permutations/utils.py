@@ -11,7 +11,7 @@ from matplotlib.animation import FuncAnimation
 from pytorch_lightning import LightningModule
 from torch import Tensor
 
-from model_merging.utils import to_np
+from model_merging.utils.utils import to_np
 from model_merging.permutations.permutation_spec import PermutationSpec
 
 # shape (n, n), contains the permutation matrix, e.g. [[1, 0, 0, 0], [0, 0, 0, 1], [0, 0, 1, 0], [0, 1, 0, 0]]

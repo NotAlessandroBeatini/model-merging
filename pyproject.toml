@@ -168,6 +168,8 @@ dependencies = [
     "websockets==11.0.3",
     "mplcursors>=0.6",
     "nbformat>=5.10.4",
+    "graphviz>=0.21",
+    "torchviz>=0.0.3",
 ]
 
 
@@ -209,4 +211,9 @@ test = ["pytest", "pytest-cov"]
 [build-system]
 requires = ["setuptools", "wheel"]
 build-backend = "setuptools.build_meta"
+
+[dependency-groups]
+dev = [
+    "model-merging",
+]
 

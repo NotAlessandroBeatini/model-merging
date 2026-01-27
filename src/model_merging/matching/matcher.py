@@ -1,7 +1,7 @@
 from model_merging.permutations.permutation_spec import PermutationSpec
 from model_merging.matching.utils import LayerIterationOrder
 import torch
-from model_merging.utils import timeit
+from model_merging.utils.utils import timeit
 from model_merging.matching.weight_matching import weight_matching
 
 

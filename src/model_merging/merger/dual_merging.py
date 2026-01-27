@@ -112,6 +112,8 @@ def create_embedding_mod(g, name,mass):
         return {name: g / rms_norm}
     M = Module(mass, 1, embedding_dualize)
     return M
+
+
 def concatenate(M1, M2):
     M = Module(M1.get_mass() + M2.get_mass(), 
                M1.get_sensitivity() + M2.get_sensitivity())
@@ -142,6 +144,7 @@ def compose(M2, M1):
     
     M.set_dualize(compose_dualize)
     return M
+
 
 def build_clip_vit_network_module(layer_names, grads, masses):
     """
@@ -374,6 +377,7 @@ def build_clip_vit_network_module(layer_names, grads, masses):
     
     return module_map
 
+
 class DualMerger(TaskVectorBasedMerger):
 
     def __init__(self, optimal_alphas, svd_path, svd_compress_factor,model_name, device=None):
@@ -449,6 +453,7 @@ class DualMerger(TaskVectorBasedMerger):
         )
 
         return merged_encoder
+
 
 class DualCommonTaskSpecificMerger(TaskVectorBasedMerger):
     def __init__(
