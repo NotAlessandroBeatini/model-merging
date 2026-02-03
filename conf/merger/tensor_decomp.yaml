@@ -1,0 +1,43 @@
+_target_: model_merging.merger.tensor_decomp_merger.TensorDecompMerger
+
+# Cross-layer families to merge with tensor decomposition
+layer_families:
+  - visual.transformer.resblocks.*.attn.in_proj_weight
+  - visual.transformer.resblocks.*.attn.out_proj.weight
+  - visual.transformer.resblocks.*.mlp.c_fc.weight
+  - visual.transformer.resblocks.*.mlp.c_proj.weight
+
+# Decomposition strategy
+decomp: hosvd
+
+# Rank selection
+rank_strategy: fixed   # fixed | energy
+
+# Fixed ranks (used when rank_strategy=fixed; null means full dimension)
+rank_task: null
+rank_layer: null
+rank_out: null
+rank_in: null
+
+# Energy thresholds (used when rank_strategy=energy)
+energy_task: 0.95
+energy_layer: 0.95
+energy_out: 1.0
+energy_in: 1.0
+
+# Task weighting when collapsing the task mode
+task_weighting: uniform  # uniform | accuracy | manual
+task_weights: null       # used when task_weighting=manual
+normalize_task_weights: true
+
+# Fallback for parameters not covered by layer_families
+fallback: tsv            # tsv | mean
+non_matrix_params_aggregation: "mean"
+svd_path: "${oc.env:MODELS_PATH}/svd_dict_${nn.encoder.model_name}.pt"
+svd_compress_factor: null
+
+# Used when task_weighting=accuracy
+finetuned_accuracy_path: "${oc.env:PROJECT_ROOT}/results/finetuning/accs.json"
+model_name: ${nn.encoder.model_name}
+
+device: ${device}
