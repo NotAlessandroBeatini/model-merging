@@ -4,7 +4,7 @@ from pathlib import Path
 from typing import List, Mapping, Optional
 
 import hydra
-import lightning.pytorch as pl
+import pytorch_lightning as pl
 import omegaconf
 from omegaconf import DictConfig
 from torch.utils.data import DataLoader, Dataset

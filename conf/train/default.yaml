@@ -50,7 +50,7 @@ logging:
     source: true
 
   logger:
-    _target_: lightning.pytorch.loggers.WandbLogger
+    _target_: pytorch_lightning.loggers.WandbLogger
 
     project: ${core.project_name}
     entity: gladia
