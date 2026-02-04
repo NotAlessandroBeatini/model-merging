@@ -113,7 +113,7 @@ celerybeat.pid
 *.sage.py
 
 # Environments
-.env
+# .env is tracked for this repo (see RUNNING_EXPERIMENTS.md)
 .venv
 env/
 venv/
